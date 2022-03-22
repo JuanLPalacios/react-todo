@@ -4,24 +4,8 @@ import Header from "./Header";
 import InputTodo from "./InputTodo"
 import TodosList from "./TodosList";
 class TodoContainer extends React.Component {
-  state = JSON.parse(localStorage.getItem("myItem")) || {
-    todos: [
-      {
-        id: uuidv4(),
-        title: "Setup development environment",
-        completed: true
-      },
-      {
-        id: uuidv4(),
-        title: "Develop website and add content",
-        completed: false
-      },
-      {
-        id: uuidv4(),
-        title: "Deploy to live server",
-        completed: false
-      }
-    ]
+  state = {
+    todos: []
   };
   handleChange = id => {
     this.setState(prevState => {
@@ -36,7 +20,6 @@ class TodoContainer extends React.Component {
           return todo
         }),
       };
-      localStorage.setItem("myItem", JSON.stringify(newState))
       return newState;
     })
   };
@@ -48,7 +31,6 @@ class TodoContainer extends React.Component {
         })
       ]
     });
-    localStorage.setItem("myItem", JSON.stringify(this.state))
   };
   addTodoItem = title => {
     const newTodo = {
@@ -59,7 +41,6 @@ class TodoContainer extends React.Component {
     this.setState({
       todos: [...this.state.todos, newTodo]
     });
-    localStorage.setItem("myItem", JSON.stringify(this.state))
   };
   setUpdate = (updatedTitle, id) => {
     this.setState({
@@ -70,7 +51,27 @@ class TodoContainer extends React.Component {
         return todo
       }),
     })
-    localStorage.setItem("myItem", JSON.stringify(this.state))
+  }
+  componentDidMount() {
+    const loadedTodos = JSON.parse(localStorage.getItem("todos"));
+    if (loadedTodos) {
+      this.setState({
+        todos: loadedTodos
+      })
+    }
+    else
+    fetch("https://jsonplaceholder.typicode.com/todos?_limit=10")
+      .then(response => response.json())
+      .then(data => this.setState({ todos: data }));
+  }
+  componentDidUpdate(prevProps, prevState) {
+    if(prevState.todos !== this.state.todos) {
+      const temp = JSON.stringify(this.state.todos)
+      localStorage.setItem("todos", temp)
+    }
+  }
+  componentWillUnmount() {
+    console.log("Cleaning up...")
   }
   render() {
     return (
