@@ -4,7 +4,7 @@ import Header from "./Header";
 import InputTodo from "./InputTodo"
 import TodosList from "./TodosList";
 class TodoContainer extends React.Component {
-  state = {
+  state = JSON.parse(localStorage.getItem("myItem")) || {
     todos: [
       {
         id: uuidv4(),
@@ -25,7 +25,7 @@ class TodoContainer extends React.Component {
   };
   handleChange = id => {
     this.setState(prevState => {
-      return {
+      const newState = {
         todos: prevState.todos.map(todo => {
           if (todo.id === id) {
             return {
@@ -35,7 +35,9 @@ class TodoContainer extends React.Component {
           }
           return todo
         }),
-      }
+      };
+      localStorage.setItem("myItem", JSON.stringify(newState))
+      return newState;
     })
   };
   delTodo = id => {
@@ -46,6 +48,7 @@ class TodoContainer extends React.Component {
         })
       ]
     });
+    localStorage.setItem("myItem", JSON.stringify(this.state))
   };
   addTodoItem = title => {
     const newTodo = {
@@ -56,6 +59,7 @@ class TodoContainer extends React.Component {
     this.setState({
       todos: [...this.state.todos, newTodo]
     });
+    localStorage.setItem("myItem", JSON.stringify(this.state))
   };
   setUpdate = (updatedTitle, id) => {
     this.setState({
@@ -66,6 +70,7 @@ class TodoContainer extends React.Component {
         return todo
       }),
     })
+    localStorage.setItem("myItem", JSON.stringify(this.state))
   }
   render() {
     return (
