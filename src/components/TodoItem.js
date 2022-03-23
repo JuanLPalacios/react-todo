@@ -1,35 +1,36 @@
-import React, { useState } from "react"
-import styles from "./TodoItem.module.css"
+import React, { useState } from 'react';
+import styles from './TodoItem.module.css';
 
 export default function TodoItem(props) {
   const [state, setState] = useState({
     editing: false,
-  })
+  });
   const handleEditing = () => {
     setState({
       editing: true,
-    })
-  }
-  const handleUpdatedDone = event => {
-    if (event.key === "Enter") {
-      setState({ editing: false })
+    });
+  };
+  const handleUpdatedDone = (event) => {
+    if (event.key === 'Enter') {
+      setState({ editing: false });
     }
-  }
+  };
   const completedStyle = {
-    fontStyle: "italic",
-    color: "#595959",
+    fontStyle: 'italic',
+    color: '#595959',
     opacity: 0.4,
-    textDecoration: "line-through",
-  }
-  let viewMode = {}
-  let editMode = {}
+    textDecoration: 'line-through',
+  };
+  const viewMode = {};
+  const editMode = {};
 
   if (state.editing) {
-    viewMode.display = "none"
+    viewMode.display = 'none';
   } else {
-    editMode.display = "none"
+    editMode.display = 'none';
   }
-  const { completed, id, title } = props.todo
+  // eslint-disable-next-line object-curly-newline, react/prop-types
+  const { todo: { completed, id, title }, handleChangeProps, deleteTodoProps, setUpdate } = props;
 
   return (
     <li className={styles.item}>
@@ -38,9 +39,9 @@ export default function TodoItem(props) {
           type="checkbox"
           className={styles.checkbox}
           checked={completed}
-          onChange={() => props.handleChangeProps(id)}
+          onChange={() => handleChangeProps(id)}
         />
-        <button onClick={() => props.deleteTodoProps(id)}>Delete</button>
+        <button type="button" onClick={() => deleteTodoProps(id)}>Delete</button>
         <span style={completed ? completedStyle : null}>{title}</span>
       </div>
       <input
@@ -48,11 +49,11 @@ export default function TodoItem(props) {
         style={editMode}
         className={styles.textInput}
         value={title}
-        onChange={e => {
-          props.setUpdate(e.target.value, id)
+        onChange={(e) => {
+          setUpdate(e.target.value, id);
         }}
         onKeyDown={handleUpdatedDone}
       />
     </li>
-  )
+  );
 }
